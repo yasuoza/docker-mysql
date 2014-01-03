@@ -1,21 +1,20 @@
 #!/bin/bash
 
 if [ -f /.mysql_admin_created ]; then
-	echo "MySQL 'admin' user already created!"
-	exit 0
+  echo "MySQL 'admin' user already created!"
+  exit 0
 fi
 
 /usr/bin/mysqld_safe > /dev/null 2>&1 &
 
-PASS=$(pwgen -s 12 1)
-echo "=> Creating MySQL admin user with random password"
-RET=1
-while [[ RET -ne 0 ]]; do
-	sleep 5
-	mysql -uroot -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$PASS'"
-	RET=$?
+until $(mysqladmin ping > /dev/null 2>&1)
+do
+    :
 done
 
+PASS=$(pwgen -s 12 1)
+echo "=> Creating MySQL admin user with random password"
+mysql -uroot -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$PASS'"
 mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION"
 
 mysqladmin -uroot shutdown
