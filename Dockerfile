@@ -1,5 +1,5 @@
 FROM ubuntu:quantal
-MAINTAINER Fernando Mayo <fernando@tutum.co>
+MAINTAINER Yasuharu Ozaki "http://github.com/yasuoza"
 
 # Install packages
 RUN apt-get update
